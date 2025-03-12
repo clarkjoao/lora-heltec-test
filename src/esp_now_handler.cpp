@@ -55,7 +55,6 @@ void onReceive(const uint8_t *mac, const uint8_t *incomingData, int len) {
     Serial.print("Opcode Received: ");
     Serial.println(msg.opcode);
 
-    //adicionar callback que vai ser instanciando no initESPNOW
     if (recvCallback != nullptr) {
         recvCallback(mac, msg);
     }

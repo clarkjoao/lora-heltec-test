@@ -6,11 +6,9 @@
 #include <WiFi.h>
 
 // Definir como MESTRE ou ESCRAVO
-// #ifdef AS_MASTER
-//     #define DEVICE_MASTER 1
-// #endif
-
-#define DEVICE_MASTER 1
+#ifdef AS_MASTER
+    #define DEVICE_MASTER 1
+#endif
 
 #define WIFI_CHANNEL 3
 

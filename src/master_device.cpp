@@ -4,8 +4,7 @@
 const int MAX_SLAVES = 20;
 uint8_t slaveAddresses[MAX_SLAVES][6];
 int slaveCount = 0;
-bool sentActivation = false, sentDeactivation = false;
-unsigned long firstPeerTime = 0, activationTime = 0;
+bool sentActivation = false;
 
 void onMasterReceiveMessage(const uint8_t *mac, const Message &msg) {
 
@@ -42,5 +41,18 @@ void setupMaster() {
 }
 
 void loopMaster() {
+
+    if (!sentActivation) {
+        for (int i = 0; i < slaveCount; i++) {
+            sendESPNowMessage(slaveAddresses[i], ACTIVATE_PIN_REQ);
+        }
+        sentActivation = true;
+    }else{
+        for (int i = 0; i < slaveCount; i++) {
+            sendESPNowMessage(slaveAddresses[i], DEACTIVATE_PIN_REQ);
+        }
+        sentActivation = false;
+    }
+    delay(2000);
 
 }
