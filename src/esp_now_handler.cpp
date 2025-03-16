@@ -61,7 +61,14 @@ void onReceive(const uint8_t *mac, const uint8_t *incomingData, int len) {
 }
 
 void initESPNow(OnReceiveCallback callback) {
-    WiFi.mode(WIFI_STA);
+
+    // wifi_mode_t currentMode;
+    // esp_wifi_get_mode(&currentMode);
+
+    // if (currentMode != WIFI_MODE_STA) {
+    //     Serial.println("Changing Wi-Fi mode to STA...");
+    //     WiFi.mode(WIFI_STA);
+    // }
 
     if (esp_now_init() != ESP_OK) {
         Serial.println("Error at started ESP-NOW");
