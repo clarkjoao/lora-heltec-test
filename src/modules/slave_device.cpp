@@ -1,6 +1,6 @@
 #include <iostream>
 #include "config.h"
-#include "slave_device.h"
+#include "modules/slave_device.h"
 
 uint8_t masterAddress[6];
 bool masterRegistered = false;

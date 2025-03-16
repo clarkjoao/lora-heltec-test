@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <esp_now.h>
-#include "message.h"
+#include "types/message.h"
 
 extern uint8_t broadcastAddress[6];
 

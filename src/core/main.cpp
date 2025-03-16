@@ -1,12 +1,12 @@
-#include "config.h"
-#include "utils.h"
+#include "core/config.h"
+#include "utils/utils.h"
 
 #ifdef DEVICE_MASTER
-    #include "master_device.h"
-    #include "wifi_manager.h"
-    #include "websocket_handler.h"
+    #include "drivers/wifi_manager.h"
+    #include "drivers/websocket_handler.h"
+    #include "modules/master_device.h"
 #else
-    #include "slave_device.h"
+    #include "modules/slave_device.h"
 #endif
 
 void onWebSocketMessage(const char* message)    {

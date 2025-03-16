@@ -1,5 +1,5 @@
 #include "config.h"
-#include "master_device.h"
+#include "modules/master_device.h"
 
 const int MAX_SLAVES = 20;
 uint8_t slaveAddresses[MAX_SLAVES][6];

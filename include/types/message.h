@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include "config.h"
+#include "core/config.h"
 
 enum Opcodes {
     REGISTER_SLAVE_REQ = 0x01,
