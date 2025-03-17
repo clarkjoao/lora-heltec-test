@@ -1,6 +1,8 @@
 #include "drivers/websocket_handler.h"
 #include <WiFi.h>
 #include <ArduinoWebsockets.h>
+#include "core/config.h"
+#include <ArduinoJson.h> 
 
 using namespace websockets;
 
@@ -9,55 +11,87 @@ OnWebSocketMessageCallback messageCallback = nullptr;
 bool isConnected = false;
 
 void onMessageCallback(WebsocketsMessage message) {
-    Serial.printf("Mensagem recebida: %s\n", message.data().c_str());
+    if (message.length() < 3) {
+        return;
+    }
+
+    String jsonData = message.data().substring(2);
+
+    StaticJsonDocument<256> doc;
+    DeserializationError error = deserializeJson(doc, jsonData);
+
+    if (error) {
+        return;
+    }
+
+    const char* event = doc["event"];
+    JsonVariant data = doc["data"];
+
+    if (!event || data.isNull()) {
+        return;
+    }
+
+    serializeJson(data, Serial);
+    Serial.println();
+
     if (messageCallback) {
-        messageCallback(message.data().c_str());
+        messageCallback(event, data.as<String>().c_str());
     }
 }
 
 void onEventCallback(WebsocketsEvent event, String data) {
     switch (event) {
         case WebsocketsEvent::ConnectionOpened:
-            Serial.println("WebSocket conectado!");
+            Serial.println("WebSocket Connected!");
             isConnected = true;
-            client.send("Olá, servidor!");
             break;
         case WebsocketsEvent::ConnectionClosed:
-            Serial.println("WebSocket desconectado.");
+            Serial.println("WebSocket Disconnected.");
             isConnected = false;
             break;
         case WebsocketsEvent::GotPing:
-            Serial.println("Ping recebido.");
+            Serial.println("Received Ping from Server.");
             break;
+        
         case WebsocketsEvent::GotPong:
-            Serial.println("Pong recebido.");
+            Serial.println("Received Pong response.");
             break;
     }
 }
 
 void initWebSocket(const char* ws_url, OnWebSocketMessageCallback callback) {
-    Serial.printf("Conectando ao WebSocket em %s:%d...\n", ws_url);
+    Serial.printf("Websocket Connected %s:%d...\n", ws_url);
 
     client.onMessage(onMessageCallback);
     client.onEvent(onEventCallback);
 
     if (client.connect(ws_url)) {
-        Serial.println("Conexão bem-sucedida!");
+        Serial.println("Connected to WebSocket!");
     } else {
-        Serial.println("Falha na conexão com WebSocket.");
+        Serial.println("Failed to connect to WebSocket!");
     }
 
     messageCallback = callback;
 }
 
-void sendWebSocketMessage(const char* message) {
-    if (isConnected) {
-        Serial.printf("Enviando mensagem: %s\n", message);
-        client.send(message);
-    } else {
-        Serial.println("Erro: WebSocket não está conectado!");
+void sendWebSocketMessage(const char* event, const char* data) {
+    if (!isConnected) {
+        Serial.println("Not connected to WebSocket!");
+        return;
     }
+
+    StaticJsonDocument<256> doc;
+    
+    doc["event"] = event;
+    doc["data"] = data;
+
+    String jsonMessage;
+    serializeJson(doc, jsonMessage);
+
+    Serial.printf("Sending WebSocket message: %s\n", jsonMessage.c_str());
+    client.send(jsonMessage);
 }
+
 
 void handleWebSocket() {
     if (client.available()) {

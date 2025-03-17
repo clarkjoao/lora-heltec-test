@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <esp_now.h>
 #include <WiFi.h>
 

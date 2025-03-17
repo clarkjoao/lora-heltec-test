@@ -3,11 +3,12 @@
 
 #include <Arduino.h>
 #include <esp_now.h>
-#include "types/message.h"
+#include "struct/opcodes.h"
+#include "struct/events.h"
 
 extern uint8_t broadcastAddress[6];
 
-typedef void (*OnReceiveCallback)(const uint8_t*, const Message&);
+typedef void (*OnReceiveCallback)(const uint8_t*, const Packet&);
 
 uint8_t addPeerToNetwork(const uint8_t *mac);
 void removePeerFromNetwork(const uint8_t *mac);

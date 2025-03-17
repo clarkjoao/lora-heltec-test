@@ -2,16 +2,17 @@
 #include <WiFi.h>
 
 void connectToWiFi(const char* ssid, const char* password) {
-    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    Serial.print("Conectando-se ao Wi-Fi");
+    Serial.print("Trying to connect to ");
+    Serial.print(ssid);
 
     while (WiFi.status() != WL_CONNECTED) {
         Serial.print(".");
         delay(1000);
     }
 
-    Serial.println("\nWi-Fi conectado!");
-    Serial.print("Endereço IP: ");
+    Serial.println();
+    Serial.println("Connected to WiFi");
+    Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 }

@@ -16,14 +16,14 @@ uint8_t addPeerToNetwork(const uint8_t *mac) {
     if (esp_now_add_peer(&peerInfo) == ESP_OK) {
         return 1;
     } else {
-        Serial.println("Erro ao adicionar peer.");
+        Serial.println("Error at adding peer.");
         return 0;
     }
 }
 
 void removePeerFromNetwork(const uint8_t *mac) {
     if (esp_now_del_peer(mac) == ESP_OK) {
-        Serial.println("Peer removido com sucesso.");
+        Serial.println("Peer removed.");
     } else {
         Serial.println("Erro ao remover peer.");
     }
@@ -35,28 +35,28 @@ void onSend(const uint8_t *mac_addr, esp_now_send_status_t status) {
 }
 
 void onReceive(const uint8_t *mac, const uint8_t *incomingData, int len) {
-    if (len < sizeof(Message)) {
+    if (len < sizeof(Packet)) {
         Serial.println("Invalid packet size, from: ");
         printMac(mac);
         return;
     }
 
-    Message msg;
-    memcpy(&msg, incomingData, sizeof(msg));
+    Packet pkt;
+    memcpy(&pkt, incomingData, sizeof(pkt));
 
-    if (msg.magicByte != MAGIC_WORD){
+    if (pkt.magicByte != MAGIC_WORD){
         Serial.println("Invalid magic word from:");
         printMac(mac);
         Serial.println("Ignoring packet");
-        Serial.println(msg.opcode);
+        Serial.println(pkt.opcode);
         return;
     }
 
     Serial.print("Opcode Received: ");
-    Serial.println(msg.opcode);
+    Serial.println(pkt.opcode);
 
     if (recvCallback != nullptr) {
-        recvCallback(mac, msg);
+        recvCallback(mac, pkt);
     }
 }
 
@@ -67,7 +67,7 @@ void initESPNow(OnReceiveCallback callback) {
 
     // if (currentMode != WIFI_MODE_STA) {
     //     Serial.println("Changing Wi-Fi mode to STA...");
-    //     WiFi.mode(WIFI_STA);
+   // WiFi.mode(WIFI_STA);
     // }
 
     if (esp_now_init() != ESP_OK) {
@@ -85,8 +85,8 @@ void initESPNow(OnReceiveCallback callback) {
 }
 
 void sendESPNowMessage(const uint8_t *mac, uint8_t opcode) {
-    Message msg = {MAGIC_WORD, opcode};
-    esp_now_send(mac, (uint8_t*)&msg, sizeof(msg));
+    Packet pkt = {MAGIC_WORD, opcode};
+    esp_now_send(mac, (uint8_t*)&pkt, sizeof(pkt));
     Serial.print("Sending message to: ");
     printMac(mac);
     Serial.print(" with opcode: ");

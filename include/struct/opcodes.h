@@ -10,13 +10,15 @@ enum Opcodes {
     ACTIVATE_PIN_ACK = 0x04,
     DEACTIVATE_PIN_REQ = 0x05,
     DEACTIVATE_PIN_ACK = 0x06,
+    PING_REQ = 0x07,
+    PONG_ACK = 0x08,
 };
 
-typedef struct Message {
+typedef struct Packet {
     uint16_t magicByte;
     uint8_t opcode;
     uint8_t macAddr[6];
     time_t timestamp;
-} Message;
+} Packet;
 
 #endif
